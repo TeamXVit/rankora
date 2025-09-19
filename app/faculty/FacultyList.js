@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function FacultyList({ faculties }) {
   const [query, setQuery] = useState("");
+  const router = useRouter();
 
   const filtered = faculties.filter((item) => {
     const f = item.attributes;
@@ -35,7 +37,8 @@ export default function FacultyList({ faculties }) {
           return (
             <div
               key={item.id}
-              className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-6 flex flex-col"
+              onClick={() => router.push(`/faculty/${item.id}`)}
+              className="cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-200 p-6 flex flex-col"
             >
               {/* Photo */}
               {faculty.Photo?.data?.attributes?.url && (
@@ -56,103 +59,6 @@ export default function FacultyList({ faculties }) {
               <p className="text-sm text-gray-500 text-center">
                 {faculty.Department} ({faculty.sub_department})
               </p>
-
-              {/* Contact */}
-              <div className="mt-4 text-sm text-gray-700 space-y-1">
-                <p>
-                  <span className="font-semibold">Office:</span>{" "}
-                  {faculty.Office_Address}
-                </p>
-                <p>
-                  <span className="font-semibold">Contact:</span>{" "}
-                  {faculty.Contact_No}
-                </p>
-                <p>
-                  <span className="font-semibold">Email:</span>{" "}
-                  <a
-                    href={`mailto:${faculty.EMAIL}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {faculty.EMAIL}
-                  </a>
-                </p>
-              </div>
-
-              {/* Education */}
-              <div className="mt-4">
-                <h3 className="text-md font-semibold text-gray-800 mb-2">
-                  Education
-                </h3>
-                <ul className="list-disc list-inside text-gray-600 text-sm space-y-1">
-                  {faculty.Education_UG && <li>UG: {faculty.Education_UG}</li>}
-                  {faculty.Education_PG && <li>PG: {faculty.Education_PG}</li>}
-                  {faculty.Education_PHD && (
-                    <li>PhD: {faculty.Education_PHD}</li>
-                  )}
-                </ul>
-              </div>
-
-              {/* Research */}
-              <div className="mt-4">
-                <h3 className="text-md font-semibold text-gray-800 mb-2">
-                  Research
-                </h3>
-                <p className="text-sm text-gray-600 mb-3">
-                  {faculty.Research_area_of_specialization}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {faculty.Research_google_schloar && (
-                    <a
-                      href={faculty.Research_google_schloar}
-                      target="_blank"
-                      className="px-3 py-1 bg-blue-100 text-blue-700 text-xs rounded-lg hover:bg-blue-200 transition"
-                    >
-                      Google Scholar
-                    </a>
-                  )}
-                  {faculty.Research_Scopus_Id && (
-                    <a
-                      href={faculty.Research_Scopus_Id}
-                      target="_blank"
-                      className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-lg hover:bg-green-200 transition"
-                    >
-                      Scopus
-                    </a>
-                  )}
-                  {faculty.Research_vidwan && (
-                    <a
-                      href={faculty.Research_vidwan}
-                      target="_blank"
-                      className="px-3 py-1 bg-purple-100 text-purple-700 text-xs rounded-lg hover:bg-purple-200 transition"
-                    >
-                      Vidwan
-                    </a>
-                  )}
-                  {faculty.LinkedIn && (
-                    <a
-                      href={faculty.LinkedIn}
-                      target="_blank"
-                      className="px-3 py-1 bg-sky-100 text-sky-700 text-xs rounded-lg hover:bg-sky-200 transition"
-                    >
-                      LinkedIn
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              {/* Memberships */}
-              {faculty.Professonal_Membership && (
-                <div className="mt-4">
-                  <h3 className="text-md font-semibold text-gray-800 mb-2">
-                    Memberships
-                  </h3>
-                  <ul className="list-disc list-inside text-sm text-gray-600">
-                    {faculty.Professonal_Membership.split(",").map((m, i) => (
-                      <li key={i}>{m.trim()}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           );
         })}

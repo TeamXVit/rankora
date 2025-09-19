@@ -1,7 +1,7 @@
 import FacultyList from "./FacultyList";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@/lib/auth";
+// import { redirect } from "next/navigation";
 
 async function getFacultyData() {
   const baseUrl =
@@ -17,11 +17,11 @@ async function getFacultyData() {
 }
 
 export default async function FacultyPage() {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
 
-  if (!session) {
-    redirect("/auth/error?error=Please login to access this page");
-  }
+  // if (!session) {
+  //   redirect("/auth/error?error=Please login to access this page");
+  // }
   const data = await getFacultyData();
   const faculties = data.data;
 
