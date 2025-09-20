@@ -1,9 +1,11 @@
+"use client";
 import { notFound } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, useMemo, use } from "react";
 import { 
   Mail, 
-  Phone, 
   MapPin, 
-  User, 
+  Star,
   GraduationCap, 
   Microscope, 
   Users, 
@@ -12,11 +14,12 @@ import {
   Rocket, 
   ExternalLink,
   ChevronDown,
-  BarChart3
+  BarChart3,
+  ArrowLeft
 } from "lucide-react";
 
-// Accordion Component
-function Accordion({ children, title, icon, defaultOpen = false, count = null }) {
+// Memoized Accordion Component to prevent unnecessary re-renders
+const Accordion = ({ children, title, icon, defaultOpen = false, count = null }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
       <details className="group" open={defaultOpen}>
@@ -38,9 +41,10 @@ function Accordion({ children, title, icon, defaultOpen = false, count = null })
       </details>
     </div>
   );
-}
+};
 
-async function getFaculty(id) {
+// Move fetch function outside component to prevent recreation
+const fetchFacultyData = async (id) => {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const res = await fetch(`${baseUrl}/data.json`, {
     next: { revalidate: 60 },
@@ -50,11 +54,125 @@ async function getFaculty(id) {
 
   const { data } = await res.json();
   return data.find((item) => String(item.id) === id);
-}
+};
 
-export default async function FacultyDetailPage({ params }) {
-  const faculty = await getFaculty(params.id);
+export default function FacultyDetailPage({ params }) {
+  const router = useRouter();
+  const [faculty, setFaculty] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const {id} = use(params);
 
+  // Memoized categories to prevent recreation on every render
+  const categories = useMemo(() => [
+    { key: "attendance", label: "Attendance" },
+    { key: "theory", label: "Theory Evaluation" },
+    { key: "lab", label: "Lab Evaluation" },
+    { key: "project", label: "Project Evaluation (ECS, Capstone, Project)" },
+  ], []);
+
+  // Memoized ratings to prevent recreation
+  const ratings = useMemo(() => ({
+    attendance: 0,
+    theory: 0,
+    lab: 0,
+    project: 0,
+  }), []);
+
+  // Memoized render stars function
+  const renderStars = useCallback((value) => {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        <Star
+          key={i}
+          className={`w-5 h-5 ${
+            i <= value ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+          }`}
+        />
+      );
+    }
+    return stars;
+  }, []);
+
+  // Back button handler with useCallback to prevent recreation
+  const handleGoBack = useCallback(() => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  }, [router]);
+
+  // Effect for fetching faculty data
+  useEffect(() => {
+    let isMounted = true; // Flag to prevent state updates on unmounted component
+
+    const loadFaculty = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const facultyData = await fetchFacultyData(id);
+        
+        if (!isMounted) return; // Prevent state update if component unmounted
+        
+        if (!facultyData) {
+          notFound();
+          return;
+        }
+        
+        setFaculty(facultyData);
+      } catch (err) {
+        if (!isMounted) return; // Prevent state update if component unmounted
+        
+        console.error('Error loading faculty data:', err);
+        setError(err.message);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadFaculty();
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading faculty profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error loading faculty data: {error}</p>
+          <button 
+            onClick={handleGoBack}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Not found state
   if (!faculty) {
     notFound();
   }
@@ -66,49 +184,98 @@ export default async function FacultyDetailPage({ params }) {
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="flex flex-col lg:flex-row items-start gap-8">
-            {f.Photo?.data?.attributes?.url && (
-              <div className="flex-shrink-0">
-                <img
-                  src={f.Photo.data.attributes.url}
-                  alt={f.Name}
-                  className="w-48 h-48 rounded-lg object-cover shadow-lg"
-                />
+          {/* Back Button */}
+          <div className="mb-6">
+            <button
+              onClick={handleGoBack}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors text-gray-700 font-medium"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back
+            </button>
+          </div>
+
+          <div className="flex flex-col lg:flex-row items-start gap-10">
+            {/* Left Column: Image + Faculty Details */}
+            <div className="w-full lg:w-1/3">
+              {f.Photo?.data?.attributes?.url && (
+                <div className="flex-shrink-0 mb-6">
+                  <img
+                    src={f.Photo.data.attributes.url}
+                    alt={f.Name}
+                    className="w-48 h-48 rounded-xl object-cover shadow-lg mx-auto lg:mx-0"
+                    loading="lazy" // Add lazy loading for performance
+                  />
+                </div>
+              )}
+
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-1 text-center lg:text-left">
+                  {f.Name}
+                </h1>
+                <h2 className="text-lg text-gray-700 mb-1 text-center lg:text-left">
+                  {f.Designation}
+                </h2>
+                <p className="text-md text-gray-600 mb-6 text-center lg:text-left">
+                  {f.Department}
+                </p>
+
+                {/* Contact Info */}
+                <div className="grid grid-cols-1 gap-3">
+                  {f.EMAIL && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Mail className="w-5 h-5 text-gray-400" />
+                      <a
+                        href={`mailto:${f.EMAIL}`}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        {f.EMAIL}
+                      </a>
+                    </div>
+                  )}
+                  {f.Office_Address && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <MapPin className="w-5 h-5 text-gray-400" />
+                      <span className="text-gray-700">{f.Office_Address}</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
-            <div className="flex-1">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{f.Name}</h1>
-              <h2 className="text-xl text-gray-700 mb-2">{f.Designation}</h2>
-              <p className="text-lg text-gray-600 mb-6">{f.Department}</p>
-              
-              {/* Contact Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {f.EMAIL && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-gray-400" />
-                    <a href={`mailto:${f.EMAIL}`} className="text-blue-600 hover:text-blue-800">
-                      {f.EMAIL}
-                    </a>
-                  </div>
-                )}
-                {f.Contact_No && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-700">{f.Contact_No}</span>
-                  </div>
-                )}
-                {f.Office_Address && (
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-700">{f.Office_Address}</span>
-                  </div>
-                )}
-                {f.Employee_Id && (
-                  <div className="flex items-center gap-3">
-                    <User className="w-5 h-5 text-gray-400" />
-                    <span className="text-gray-700">ID: {f.Employee_Id}</span>
-                  </div>
-                )}
+            </div>
+
+            {/* Right Column: Ratings */}
+            <div className="flex-1 w-full">
+              <div className="bg-gray-50 rounded-2xl p-6 shadow-inner">
+                <h3 className="text-2xl font-semibold text-gray-900 mb-6">
+                  Ratings
+                </h3>
+                <div className="space-y-5">
+                  {categories.map((cat) => (
+                    <div
+                      key={cat.key}
+                      className="flex items-center justify-between pb-3"
+                    >
+                      <span className="text-gray-800 font-medium">
+                        {cat.label}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="flex">{renderStars(ratings[cat.key])}</div>
+                        <span className="text-gray-600 text-sm">
+                          {ratings[cat.key]}/5
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 flex justify-center">
+                  <a
+                    href="/give-rating"
+                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition font-medium"
+                  >
+                    Give Rating
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -266,6 +433,7 @@ export default async function FacultyDetailPage({ params }) {
                   <a
                     href={f.Research_google_schloar}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">Google Scholar</span>
@@ -276,6 +444,7 @@ export default async function FacultyDetailPage({ params }) {
                   <a
                     href={f.Research_Research_Gate}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">ResearchGate</span>
@@ -286,6 +455,7 @@ export default async function FacultyDetailPage({ params }) {
                   <a
                     href={f.Research_Scopus_Id}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">Scopus</span>
@@ -296,6 +466,7 @@ export default async function FacultyDetailPage({ params }) {
                   <a
                     href={f.Research_orchid}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">ORCID</span>
@@ -306,6 +477,7 @@ export default async function FacultyDetailPage({ params }) {
                   <a
                     href={f.Research_vidwan}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">Vidwan</span>
@@ -316,6 +488,7 @@ export default async function FacultyDetailPage({ params }) {
                   <a
                     href={f.LinkedIn}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">LinkedIn</span>
@@ -326,6 +499,7 @@ export default async function FacultyDetailPage({ params }) {
                   <a
                     href={f.Website.startsWith('http') ? f.Website : `https://${f.Website}`}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <span className="text-gray-700">Personal Website</span>
