@@ -56,9 +56,26 @@ const fetchFacultyData = async (id) => {
   return data.find((item) => String(item.id) === id);
 };
 
+const fetchFacultyRating = async (id) => {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const res = await fetch(`${baseUrl}/api/faculty/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: "no-store", // prevents stale data if ratings update often
+  });
+  if (!res.ok) {
+    return null;
+  }
+  const data = await res.json();
+  return data; // { facultyId, ratings, ratedBy }
+};
+
 export default function FacultyDetailPage({ params }) {
   const router = useRouter();
   const [faculty, setFaculty] = useState(null);
+  const [rating, setRating] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const {id} = use(params);
@@ -87,7 +104,7 @@ export default function FacultyDetailPage({ params }) {
         <Star
           key={i}
           className={`w-5 h-5 ${
-            i <= value ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+            i <= value ? "text-blue-400 fill-blue-400" : "text-gray-300"
           }`}
         />
       );
@@ -113,6 +130,7 @@ export default function FacultyDetailPage({ params }) {
         setLoading(true);
         setError(null);
         const facultyData = await fetchFacultyData(id);
+        const facultyRating = await fetchFacultyRating(id);
         
         if (!isMounted) return; // Prevent state update if component unmounted
         
@@ -122,6 +140,7 @@ export default function FacultyDetailPage({ params }) {
         }
         
         setFaculty(facultyData);
+        setRating(facultyRating);
       } catch (err) {
         if (!isMounted) return; // Prevent state update if component unmounted
         
@@ -259,9 +278,9 @@ export default function FacultyDetailPage({ params }) {
                         {cat.label}
                       </span>
                       <div className="flex items-center gap-2">
-                        <div className="flex">{renderStars(ratings[cat.key])}</div>
+                        <div className="flex">{renderStars(rating?rating.ratings[cat.key]:ratings[cat.key])}</div>
                         <span className="text-gray-600 text-sm">
-                          {ratings[cat.key]}/5
+                          {rating?rating.ratings[cat.key]:ratings[cat.key]}/5
                         </span>
                       </div>
                     </div>
@@ -270,7 +289,7 @@ export default function FacultyDetailPage({ params }) {
 
                 <div className="mt-8 flex justify-center">
                   <a
-                    href="/give-rating"
+                    href={`/rate/${id}`}
                     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition font-medium"
                   >
                     Give Rating
