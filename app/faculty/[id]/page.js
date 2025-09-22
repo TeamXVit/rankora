@@ -82,6 +82,7 @@ export default function FacultyDetailPage({ params }) {
 
   // Memoized categories to prevent recreation on every render
   const categories = useMemo(() => [
+    { key: "teaching", label: "Teaching" },
     { key: "attendance", label: "Attendance" },
     { key: "theory", label: "Theory Evaluation" },
     { key: "lab", label: "Lab Evaluation" },
@@ -90,6 +91,7 @@ export default function FacultyDetailPage({ params }) {
 
   // Memoized ratings to prevent recreation
   const ratings = useMemo(() => ({
+    teaching: 0,
     attendance: 0,
     theory: 0,
     lab: 0,

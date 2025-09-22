@@ -83,6 +83,7 @@ export default async function RatePage({ params }) {
               Current Ratings (avg out of 5):
             </p>
             <ul className="text-sm text-gray-700 space-y-1">
+              <li>Teaching: {rating?rating.ratings.teaching:0}</li>
               <li>Attendance: {rating?rating.ratings.attendance:0}</li>
               <li>Theory: {rating?rating.ratings.theory:0}</li>
               <li>Lab: {rating?rating.ratings.lab:0}</li>

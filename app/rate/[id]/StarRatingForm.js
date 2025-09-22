@@ -21,6 +21,7 @@ function StarInput({ name, value, setValue }) {
 
 export default function StarRatingForm({ id }) {
   const [ratings, setRatings] = useState({
+    teaching: 0,
     attendance: 0,
     theory: 0,
     lab: 0,
@@ -60,6 +61,11 @@ export default function StarRatingForm({ id }) {
       onSubmit={handleSubmit}
       className="bg-white p-6 rounded-xl shadow-md space-y-6 w-full max-w-md"
     >
+      <div>
+        <label className="block font-medium mb-1">Teaching</label>
+        <StarInput name="teaching" value={ratings.teaching} setValue={setValue} />
+      </div>
+
       <div>
         <label className="block font-medium mb-1">Attendance</label>
         <StarInput name="attendance" value={ratings.attendance} setValue={setValue} />

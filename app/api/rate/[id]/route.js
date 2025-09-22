@@ -18,14 +18,14 @@ export async function POST(request, { params }) {
 
   try {
     const body = await request.json();
-    const { attendance, theory, lab, project } = body;
+    const { teaching ,attendance, theory, lab, project } = body;
 
     let faculty = await Faculty.findOne({ facultyId: id });
 
     if (!faculty) {
       faculty = await Faculty.create({
         facultyId: id,
-        ratings: { attendance: 0, theory: 0, lab: 0, project: 0 },
+        ratings: { teaching: 0 ,attendance: 0, theory: 0, lab: 0, project: 0 },
         ratedBy: [],
       });
     }
@@ -37,6 +37,10 @@ export async function POST(request, { params }) {
         { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
+
+    faculty.ratings.teaching =
+      (faculty.ratings.teaching * faculty.ratedBy.length + teaching) /
+      (faculty.ratedBy.length + 1);
 
     faculty.ratings.attendance =
       (faculty.ratings.attendance * faculty.ratedBy.length + attendance) /
