@@ -2,20 +2,20 @@
 import { notFound } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback, useMemo, use } from "react";
-import { 
-  Mail, 
-  MapPin, 
+import {
+  Mail,
+  MapPin,
   Star,
-  GraduationCap, 
-  Microscope, 
-  Users, 
-  Award, 
-  Lightbulb, 
-  Rocket, 
+  GraduationCap,
+  Microscope,
+  Users,
+  Award,
+  Lightbulb,
+  Rocket,
   ExternalLink,
   ChevronDown,
   BarChart3,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 
 // Skeleton Components
@@ -124,7 +124,6 @@ const LoadingSkeleton = () => (
     {/* Main Content Skeleton */}
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         {/* Left Column Skeleton */}
         <div className="lg:col-span-2 space-y-8">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -142,7 +141,10 @@ const LoadingSkeleton = () => (
             </div>
             <div className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                <div
+                  key={i}
+                  className="flex justify-between items-center p-3 bg-white/5 rounded-xl"
+                >
                   <SkeletonBox className="w-20 h-4 rounded" />
                   <SkeletonBox className="w-8 h-4 rounded" />
                 </div>
@@ -155,7 +157,10 @@ const LoadingSkeleton = () => (
             <SkeletonBox className="w-32 h-6 rounded mb-6" />
             <div className="space-y-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl"
+                >
                   <SkeletonBox className="w-28 h-4 rounded" />
                   <SkeletonBox className="w-4 h-4 rounded" />
                 </div>
@@ -169,7 +174,13 @@ const LoadingSkeleton = () => (
 );
 
 // Dark Theme Accordion Component
-const Accordion = ({ children, title, icon, defaultOpen = false, count = null }) => {
+const Accordion = ({
+  children,
+  title,
+  icon,
+  defaultOpen = false,
+  count = null,
+}) => {
   return (
     <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
       <details className="group" open={defaultOpen}>
@@ -198,7 +209,7 @@ const Accordion = ({ children, title, icon, defaultOpen = false, count = null })
 // Move fetch function outside component to prevent recreation
 const fetchFacultyData = async (id) => {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`/data.json`, {
+  const res = await fetch(`${baseUrl}/data.json`, {
     next: { revalidate: 60 },
   });
 
@@ -210,7 +221,7 @@ const fetchFacultyData = async (id) => {
 
 const fetchFacultyRating = async (id) => {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`/api/faculty/${id}`, {
+  const res = await fetch(`${baseUrl}/api/faculty/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -230,70 +241,68 @@ export default function FacultyDetailPage({ params }) {
   const [rating, setRating] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const {id} = use(params);
+  const { id } = use(params);
 
   // Memoized categories to prevent recreation on every render
-  const categories = useMemo(() => [
-    { key: "teaching", label: "Teaching" },
-    { key: "attendance", label: "Attendance" },
-    { key: "theory", label: "Theory Evaluation" },
-    { key: "lab", label: "Lab Evaluation" },
-    { key: "project", label: "Project Evaluation (ECS, Capstone, Project)" },
-  ], []);
+  const categories = useMemo(
+    () => [
+      { key: "teaching", label: "Teaching" },
+      { key: "attendance", label: "Attendance" },
+      { key: "theory", label: "Theory Evaluation" },
+      { key: "lab", label: "Lab Evaluation" },
+      { key: "project", label: "Project Evaluation (ECS, Capstone, Project)" },
+    ],
+    []
+  );
 
   // Memoized ratings to prevent recreation
-  const ratings = useMemo(() => ({
-    teaching: 0,
-    attendance: 0,
-    theory: 0,
-    lab: 0,
-    project: 0,
-  }), []);
+  const ratings = useMemo(
+    () => ({
+      teaching: 0,
+      attendance: 0,
+      theory: 0,
+      lab: 0,
+      project: 0,
+    }),
+    []
+  );
 
-// Memoized render stars function with half-star support
-const renderStars = useCallback((value) => {
-  const stars = [];
-  const fullStars = Math.floor(value);
-  const hasHalfStar = value % 1 >= 0.5;
-  
-  for (let i = 1; i <= 5; i++) {
-    if (i <= fullStars) {
-      // Full star
-      stars.push(
-        <Star
-          key={i}
-          className="w-5 h-5 text-indigo-400 fill-indigo-400"
-        />
-      );
-    } else if (i === fullStars + 1 && hasHalfStar) {
-      // Half star
-      stars.push(
-        <div key={i} className="relative w-5 h-5">
-          <Star className="w-5 h-5 text-gray-600 absolute inset-0" />
-          <div className="overflow-hidden w-1/2 absolute inset-0">
-            <Star className="w-5 h-5 text-indigo-400 fill-indigo-400" />
+  // Memoized render stars function with half-star support
+  const renderStars = useCallback((value) => {
+    const stars = [];
+    const fullStars = Math.floor(value);
+    const hasHalfStar = value % 1 >= 0.5;
+
+    for (let i = 1; i <= 5; i++) {
+      if (i <= fullStars) {
+        // Full star
+        stars.push(
+          <Star key={i} className="w-5 h-5 text-indigo-400 fill-indigo-400" />
+        );
+      } else if (i === fullStars + 1 && hasHalfStar) {
+        // Half star
+        stars.push(
+          <div key={i} className="relative w-5 h-5">
+            <Star className="w-5 h-5 text-gray-600 absolute inset-0" />
+            <div className="overflow-hidden w-1/2 absolute inset-0">
+              <Star className="w-5 h-5 text-indigo-400 fill-indigo-400" />
+            </div>
           </div>
-        </div>
-      );
-    } else {
-      // Empty star
-      stars.push(
-        <Star
-          key={i}
-          className="w-5 h-5 text-gray-600"
-        />
-      );
+        );
+      } else {
+        // Empty star
+        stars.push(<Star key={i} className="w-5 h-5 text-gray-600" />);
+      }
     }
-  }
-  return stars;
-}, []);
+    return stars;
+  }, []);
 
   // Back button handler with useCallback to prevent recreation
   const handleGoBack = useCallback(() => {
-    if (typeof window !== 'undefined' && window.history.length > 1) {
+    if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
     } else {
-      router.push('/');
+      router.push("/");
     }
   }, [router]);
 
@@ -307,20 +316,20 @@ const renderStars = useCallback((value) => {
         setError(null);
         const facultyData = await fetchFacultyData(id);
         const facultyRating = await fetchFacultyRating(id);
-        
+
         if (!isMounted) return;
-        
+
         if (!facultyData) {
           notFound();
           return;
         }
-        
+
         setFaculty(facultyData);
         setRating(facultyRating);
       } catch (err) {
         if (!isMounted) return;
-        
-        console.error('Error loading faculty data:', err);
+
+        console.error("Error loading faculty data:", err);
         setError(err.message);
       } finally {
         if (isMounted) {
@@ -346,8 +355,10 @@ const renderStars = useCallback((value) => {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 mb-4">Error loading faculty data: {error}</p>
-          <button 
+          <p className="text-red-400 mb-4">
+            Error loading faculty data: {error}
+          </p>
+          <button
             onClick={handleGoBack}
             className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-colors duration-300 font-medium"
           >
@@ -374,7 +385,9 @@ const renderStars = useCallback((value) => {
           {/* Back Button */}
           <div className="mb-6">
             <button
-              onClick={()=>{window.location.href = "/faculty"}}
+              onClick={() => {
+                window.location.href = "/faculty";
+              }}
               className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-xl shadow-lg hover:bg-white/20 transition-all duration-300 text-white font-medium backdrop-blur-xl"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -436,9 +449,19 @@ const renderStars = useCallback((value) => {
             {/* Right Column: Ratings */}
             <div className="flex-1 w-full">
               <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent mb-6">
-                  Faculty Ratings
-                </h3>
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+                    Faculty Ratings
+                  </h3>
+                  {/* Total People Rated */}
+                  <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-lg border border-white/20">
+                    <Users className="w-4 h-4 text-indigo-300" />
+                    <span className="text-sm text-gray-300 font-medium">
+                      {rating?.ratedBy.length || 0} rated
+                    </span>
+                  </div>
+                </div>
+
                 <div className="space-y-6">
                   {categories.map((cat) => (
                     <div
@@ -448,10 +471,15 @@ const renderStars = useCallback((value) => {
                       <span className="text-gray-300 font-medium">
                         {cat.label}
                       </span>
-                      <div className="flex items-center gap-3"> 
-                        <div className="flex">{renderStars(rating?rating.ratings[cat.key]:ratings[cat.key])}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex">
+                          {renderStars(
+                            rating ? rating.ratings[cat.key] : ratings[cat.key]
+                          )}
+                        </div>
                         <span className="text-indigo-300 text-sm font-semibold min-w-[40px]">
-                          {rating?rating.ratings[cat.key]:ratings[cat.key]}/5
+                          {rating ? rating.ratings[cat.key] : ratings[cat.key]}
+                          /5
                         </span>
                       </div>
                     </div>
@@ -479,38 +507,44 @@ const renderStars = useCallback((value) => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
-            
             {/* Education Accordion */}
-            <Accordion 
-              title="Education" 
+            <Accordion
+              title="Education"
               icon={<GraduationCap className="w-6 h-6 text-indigo-400" />}
               defaultOpen={true}
             >
               <div className="space-y-4">
                 {f.Education_PHD && (
                   <div className="border-l-4 border-indigo-500 pl-4 bg-indigo-500/10 p-4 rounded-r-xl">
-                    <div className="font-semibold text-indigo-300">Doctor of Philosophy</div>
+                    <div className="font-semibold text-indigo-300">
+                      Doctor of Philosophy
+                    </div>
                     <div className="text-gray-400">{f.Education_PHD}</div>
                   </div>
                 )}
                 {f.Education_PG && (
                   <div className="border-l-4 border-purple-500 pl-4 bg-purple-500/10 p-4 rounded-r-xl">
-                    <div className="font-semibold text-purple-300">Post Graduate</div>
+                    <div className="font-semibold text-purple-300">
+                      Post Graduate
+                    </div>
                     <div className="text-gray-400">{f.Education_PG}</div>
                   </div>
                 )}
                 {f.Education_UG && (
                   <div className="border-l-4 border-pink-500 pl-4 bg-pink-500/10 p-4 rounded-r-xl">
-                    <div className="font-semibold text-pink-300">Under Graduate</div>
+                    <div className="font-semibold text-pink-300">
+                      Under Graduate
+                    </div>
                     <div className="text-gray-400">{f.Education_UG}</div>
                   </div>
                 )}
                 {f.Education_other && (
                   <div className="border-l-4 border-gray-500 pl-4 bg-gray-500/10 p-4 rounded-r-xl">
-                    <div className="font-semibold text-gray-300">Other Qualifications</div>
+                    <div className="font-semibold text-gray-300">
+                      Other Qualifications
+                    </div>
                     <div className="text-gray-400">{f.Education_other}</div>
                   </div>
                 )}
@@ -519,18 +553,20 @@ const renderStars = useCallback((value) => {
 
             {/* Research Areas Accordion */}
             {f.Research_area_of_specialization && (
-              <Accordion 
-                title="Research Specialization" 
+              <Accordion
+                title="Research Specialization"
                 icon={<Microscope className="w-6 h-6 text-purple-400" />}
               >
-                <p className="text-gray-300 leading-relaxed">{f.Research_area_of_specialization}</p>
+                <p className="text-gray-300 leading-relaxed">
+                  {f.Research_area_of_specialization}
+                </p>
               </Accordion>
             )}
 
             {/* Professional Membership Accordion */}
             {f.Professonal_Membership && (
-              <Accordion 
-                title="Professional Memberships" 
+              <Accordion
+                title="Professional Memberships"
                 icon={<Users className="w-6 h-6 text-pink-400" />}
               >
                 <p className="text-gray-300">{f.Professonal_Membership}</p>
@@ -539,19 +575,24 @@ const renderStars = useCallback((value) => {
 
             {/* Awards Accordion */}
             {f.Awards_and_Recognitions?.length > 0 && (
-              <Accordion 
-                title="Awards & Recognition" 
+              <Accordion
+                title="Awards & Recognition"
                 icon={<Award className="w-6 h-6 text-yellow-400" />}
                 count={f.Awards_and_Recognitions.length}
               >
                 <div className="space-y-4">
                   {f.Awards_and_Recognitions.map((award, index) => (
-                    <div key={award.id} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                    <div
+                      key={award.id}
+                      className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300"
+                    >
                       <div className="flex items-start gap-3">
                         <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0 border border-yellow-500/30">
                           {index + 1}
                         </div>
-                        <p className="text-gray-300">{award.award_or_recognition_name}</p>
+                        <p className="text-gray-300">
+                          {award.award_or_recognition_name}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -561,14 +602,17 @@ const renderStars = useCallback((value) => {
 
             {/* Patents Accordion */}
             {f.Patents?.length > 0 && (
-              <Accordion 
-                title="Patents" 
+              <Accordion
+                title="Patents"
                 icon={<Lightbulb className="w-6 h-6 text-orange-400" />}
                 count={f.Patents.length}
               >
                 <div className="space-y-3">
                   {f.Patents.map((patent) => (
-                    <div key={patent.id} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                    <div
+                      key={patent.id}
+                      className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300"
+                    >
                       <p className="text-gray-300">{patent.patent}</p>
                     </div>
                   ))}
@@ -578,14 +622,17 @@ const renderStars = useCallback((value) => {
 
             {/* Projects Accordion */}
             {f.Projects?.length > 0 && (
-              <Accordion 
-                title="Research Projects" 
+              <Accordion
+                title="Research Projects"
                 icon={<Rocket className="w-6 h-6 text-blue-400" />}
                 count={f.Projects.length}
               >
                 <div className="space-y-3">
                   {f.Projects.map((project) => (
-                    <div key={project.id} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                    <div
+                      key={project.id}
+                      className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300"
+                    >
                       <p className="text-gray-300">{project.project}</p>
                     </div>
                   ))}
@@ -596,7 +643,6 @@ const renderStars = useCallback((value) => {
 
           {/* Right Sidebar */}
           <div className="space-y-6">
-            
             {/* Quick Stats */}
             <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6">
               <div className="flex items-center gap-3 mb-6">
@@ -608,22 +654,30 @@ const renderStars = useCallback((value) => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
                   <span className="text-gray-400">Patents</span>
-                  <span className="font-bold text-indigo-300">{f.Patents?.length || 0}</span>
+                  <span className="font-bold text-indigo-300">
+                    {f.Patents?.length || 0}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
                   <span className="text-gray-400">Projects</span>
-                  <span className="font-bold text-purple-300">{f.Projects?.length || 0}</span>
+                  <span className="font-bold text-purple-300">
+                    {f.Projects?.length || 0}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
                   <span className="text-gray-400">Awards</span>
-                  <span className="font-bold text-pink-300">{f.Awards_and_Recognitions?.length || 0}</span>
+                  <span className="font-bold text-pink-300">
+                    {f.Awards_and_Recognitions?.length || 0}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Academic Links */}
             <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-6">Academic Profiles</h3>
+              <h3 className="text-lg font-semibold text-white mb-6">
+                Academic Profiles
+              </h3>
               <div className="space-y-3">
                 {f.Research_google_schloar && (
                   <a
@@ -632,7 +686,9 @@ const renderStars = useCallback((value) => {
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-300 group-hover:text-white">Google Scholar</span>
+                    <span className="text-gray-300 group-hover:text-white">
+                      Google Scholar
+                    </span>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-indigo-400" />
                   </a>
                 )}
@@ -643,7 +699,9 @@ const renderStars = useCallback((value) => {
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-300 group-hover:text-white">ResearchGate</span>
+                    <span className="text-gray-300 group-hover:text-white">
+                      ResearchGate
+                    </span>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-purple-400" />
                   </a>
                 )}
@@ -654,7 +712,9 @@ const renderStars = useCallback((value) => {
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-300 group-hover:text-white">Scopus</span>
+                    <span className="text-gray-300 group-hover:text-white">
+                      Scopus
+                    </span>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-pink-400" />
                   </a>
                 )}
@@ -665,7 +725,9 @@ const renderStars = useCallback((value) => {
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-300 group-hover:text-white">ORCID</span>
+                    <span className="text-gray-300 group-hover:text-white">
+                      ORCID
+                    </span>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-indigo-400" />
                   </a>
                 )}
@@ -676,7 +738,9 @@ const renderStars = useCallback((value) => {
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-300 group-hover:text-white">Vidwan</span>
+                    <span className="text-gray-300 group-hover:text-white">
+                      Vidwan
+                    </span>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-purple-400" />
                   </a>
                 )}
@@ -687,18 +751,26 @@ const renderStars = useCallback((value) => {
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-300 group-hover:text-white">LinkedIn</span>
+                    <span className="text-gray-300 group-hover:text-white">
+                      LinkedIn
+                    </span>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-blue-400" />
                   </a>
                 )}
                 {f.Website && (
                   <a
-                    href={f.Website.startsWith('http') ? f.Website : `https://${f.Website}`}
+                    href={
+                      f.Website.startsWith("http")
+                        ? f.Website
+                        : `https://${f.Website}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-300 group-hover:text-white">Personal Website</span>
+                    <span className="text-gray-300 group-hover:text-white">
+                      Personal Website
+                    </span>
                     <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-green-400" />
                   </a>
                 )}
