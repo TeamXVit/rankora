@@ -18,24 +18,176 @@ import {
   ArrowLeft
 } from "lucide-react";
 
-// Memoized Accordion Component to prevent unnecessary re-renders
+// Skeleton Components
+const SkeletonBox = ({ className = "" }) => (
+  <div className={`bg-gray-800 animate-pulse rounded ${className}`}></div>
+);
+
+const SkeletonText = ({ lines = 1, className = "" }) => (
+  <div className={`space-y-2 ${className}`}>
+    {Array.from({ length: lines }).map((_, i) => (
+      <div
+        key={i}
+        className={`bg-gray-800 animate-pulse rounded h-4 ${
+          i === lines - 1 ? "w-3/4" : "w-full"
+        }`}
+      ></div>
+    ))}
+  </div>
+);
+
+const SkeletonAccordion = () => (
+  <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+    <div className="flex items-center justify-between p-6">
+      <div className="flex items-center gap-3">
+        <SkeletonBox className="w-10 h-10 rounded-lg" />
+        <SkeletonBox className="w-32 h-6 rounded" />
+      </div>
+      <SkeletonBox className="w-5 h-5 rounded" />
+    </div>
+    <div className="px-6 pb-6 pt-0 border-t border-white/10">
+      <SkeletonText lines={3} />
+    </div>
+  </div>
+);
+
+const SkeletonRatingRow = () => (
+  <div className="flex items-center justify-between pb-4 border-b border-white/10">
+    <SkeletonBox className="w-32 h-5 rounded" />
+    <div className="flex items-center gap-3">
+      <div className="flex gap-1">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <SkeletonBox key={i} className="w-5 h-5 rounded" />
+        ))}
+      </div>
+      <SkeletonBox className="w-12 h-4 rounded" />
+    </div>
+  </div>
+);
+
+const LoadingSkeleton = () => (
+  <div className="min-h-screen bg-transparent text-white">
+    {/* Header Section Skeleton */}
+    <div className="bg-white/5 backdrop-blur-xl rounded-3xl border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        {/* Back Button Skeleton */}
+        <div className="mb-6">
+          <SkeletonBox className="w-20 h-12 rounded-xl" />
+        </div>
+
+        <div className="flex flex-col lg:flex-row items-start gap-10">
+          {/* Left Column Skeleton */}
+          <div className="w-full lg:w-1/3">
+            {/* Image Skeleton */}
+            <div className="flex-shrink-0 mb-6">
+              <SkeletonBox className="w-48 h-48 rounded-2xl mx-auto lg:mx-0" />
+            </div>
+
+            {/* Faculty Details Skeleton */}
+            <div className="text-center lg:text-left">
+              <SkeletonBox className="w-64 h-8 rounded mb-2 mx-auto lg:mx-0" />
+              <SkeletonBox className="w-48 h-6 rounded mb-1 mx-auto lg:mx-0" />
+              <SkeletonBox className="w-56 h-5 rounded mb-6 mx-auto lg:mx-0" />
+
+              {/* Contact Info Skeleton */}
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex items-center gap-3 bg-white/5 p-3 rounded-xl">
+                  <SkeletonBox className="w-5 h-5 rounded" />
+                  <SkeletonBox className="w-48 h-4 rounded" />
+                </div>
+                <div className="flex items-center gap-3 bg-white/5 p-3 rounded-xl">
+                  <SkeletonBox className="w-5 h-5 rounded" />
+                  <SkeletonBox className="w-40 h-4 rounded" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Ratings Skeleton */}
+          <div className="flex-1 w-full">
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
+              <SkeletonBox className="w-48 h-8 rounded mb-6" />
+              <div className="space-y-6">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <SkeletonRatingRow key={i} />
+                ))}
+              </div>
+              <div className="mt-8 flex justify-center">
+                <SkeletonBox className="w-40 h-12 rounded-2xl" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Main Content Skeleton */}
+    <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Left Column Skeleton */}
+        <div className="lg:col-span-2 space-y-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <SkeletonAccordion key={i} />
+          ))}
+        </div>
+
+        {/* Right Sidebar Skeleton */}
+        <div className="space-y-6">
+          {/* Quick Stats Skeleton */}
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <SkeletonBox className="w-10 h-10 rounded-lg" />
+              <SkeletonBox className="w-24 h-6 rounded" />
+            </div>
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                  <SkeletonBox className="w-20 h-4 rounded" />
+                  <SkeletonBox className="w-8 h-4 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Academic Links Skeleton */}
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6">
+            <SkeletonBox className="w-32 h-6 rounded mb-6" />
+            <div className="space-y-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                  <SkeletonBox className="w-28 h-4 rounded" />
+                  <SkeletonBox className="w-4 h-4 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Dark Theme Accordion Component
 const Accordion = ({ children, title, icon, defaultOpen = false, count = null }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
       <details className="group" open={defaultOpen}>
-        <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors">
+        <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-white/10 transition-all duration-300">
           <div className="flex items-center gap-3">
-            {icon}
-            <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+            <div className="p-2 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-lg">
+              {icon}
+            </div>
+            <h3 className="text-xl font-semibold text-white">{title}</h3>
             {count !== null && (
-              <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm">
+              <span className="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-sm font-medium border border-indigo-500/30">
                 {count}
               </span>
             )}
           </div>
-          <ChevronDown className="w-5 h-5 text-gray-400 transition-transform group-open:rotate-180" />
+          <ChevronDown className="w-5 h-5 text-gray-400 transition-transform duration-300 group-open:rotate-180" />
         </summary>
-        <div className="px-6 pb-6 pt-0">
+        <div className="px-6 pb-6 pt-0 border-t border-white/10">
           {children}
         </div>
       </details>
@@ -46,7 +198,7 @@ const Accordion = ({ children, title, icon, defaultOpen = false, count = null })
 // Move fetch function outside component to prevent recreation
 const fetchFacultyData = async (id) => {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/data.json`, {
+  const res = await fetch(`/data.json`, {
     next: { revalidate: 60 },
   });
 
@@ -58,18 +210,18 @@ const fetchFacultyData = async (id) => {
 
 const fetchFacultyRating = async (id) => {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/faculty/${id}`, {
+  const res = await fetch(`/api/faculty/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    cache: "no-store", // prevents stale data if ratings update often
+    cache: "no-store",
   });
   if (!res.ok) {
     return null;
   }
   const data = await res.json();
-  return data; // { facultyId, ratings, ratedBy }
+  return data;
 };
 
 export default function FacultyDetailPage({ params }) {
@@ -98,21 +250,43 @@ export default function FacultyDetailPage({ params }) {
     project: 0,
   }), []);
 
-  // Memoized render stars function
-  const renderStars = useCallback((value) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
+// Memoized render stars function with half-star support
+const renderStars = useCallback((value) => {
+  const stars = [];
+  const fullStars = Math.floor(value);
+  const hasHalfStar = value % 1 >= 0.5;
+  
+  for (let i = 1; i <= 5; i++) {
+    if (i <= fullStars) {
+      // Full star
       stars.push(
         <Star
           key={i}
-          className={`w-5 h-5 ${
-            i <= value ? "text-blue-400 fill-blue-400" : "text-gray-300"
-          }`}
+          className="w-5 h-5 text-indigo-400 fill-indigo-400"
+        />
+      );
+    } else if (i === fullStars + 1 && hasHalfStar) {
+      // Half star
+      stars.push(
+        <div key={i} className="relative w-5 h-5">
+          <Star className="w-5 h-5 text-gray-600 absolute inset-0" />
+          <div className="overflow-hidden w-1/2 absolute inset-0">
+            <Star className="w-5 h-5 text-indigo-400 fill-indigo-400" />
+          </div>
+        </div>
+      );
+    } else {
+      // Empty star
+      stars.push(
+        <Star
+          key={i}
+          className="w-5 h-5 text-gray-600"
         />
       );
     }
-    return stars;
-  }, []);
+  }
+  return stars;
+}, []);
 
   // Back button handler with useCallback to prevent recreation
   const handleGoBack = useCallback(() => {
@@ -125,7 +299,7 @@ export default function FacultyDetailPage({ params }) {
 
   // Effect for fetching faculty data
   useEffect(() => {
-    let isMounted = true; // Flag to prevent state updates on unmounted component
+    let isMounted = true;
 
     const loadFaculty = async () => {
       try {
@@ -134,7 +308,7 @@ export default function FacultyDetailPage({ params }) {
         const facultyData = await fetchFacultyData(id);
         const facultyRating = await fetchFacultyRating(id);
         
-        if (!isMounted) return; // Prevent state update if component unmounted
+        if (!isMounted) return;
         
         if (!facultyData) {
           notFound();
@@ -144,7 +318,7 @@ export default function FacultyDetailPage({ params }) {
         setFaculty(facultyData);
         setRating(facultyRating);
       } catch (err) {
-        if (!isMounted) return; // Prevent state update if component unmounted
+        if (!isMounted) return;
         
         console.error('Error loading faculty data:', err);
         setError(err.message);
@@ -157,33 +331,25 @@ export default function FacultyDetailPage({ params }) {
 
     loadFaculty();
 
-    // Cleanup function to prevent memory leaks
     return () => {
       isMounted = false;
     };
   }, [id]);
 
-  // Loading state
+  // Loading state with skeleton
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading faculty profile...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 mb-4">Error loading faculty data: {error}</p>
+          <p className="text-red-400 mb-4">Error loading faculty data: {error}</p>
           <button 
             onClick={handleGoBack}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-colors duration-300 font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
             Go Back
@@ -201,15 +367,15 @@ export default function FacultyDetailPage({ params }) {
   const f = faculty.attributes;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-transparent text-white">
       {/* Header Section */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white/5 backdrop-blur-xl rounded-3xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-12">
           {/* Back Button */}
           <div className="mb-6">
             <button
-              onClick={handleGoBack}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors text-gray-700 font-medium"
+              onClick={()=>{window.location.href = "/faculty"}}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 rounded-xl shadow-lg hover:bg-white/20 transition-all duration-300 text-white font-medium backdrop-blur-xl"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -221,43 +387,46 @@ export default function FacultyDetailPage({ params }) {
             <div className="w-full lg:w-1/3">
               {f.Photo?.data?.attributes?.url && (
                 <div className="flex-shrink-0 mb-6">
-                  <img
-                    src={f.Photo.data.attributes.url}
-                    alt={f.Name}
-                    className="w-48 h-48 rounded-xl object-cover shadow-lg mx-auto lg:mx-0"
-                    loading="lazy" // Add lazy loading for performance
-                  />
+                  <div className="relative">
+                    <img
+                      src={f.Photo.data.attributes.url}
+                      alt={f.Name}
+                      className="w-48 h-48 rounded-2xl object-cover shadow-2xl mx-auto lg:mx-0 border-2 border-white/20"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 w-48 h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl blur-2xl opacity-50 mx-auto lg:mx-0"></div>
+                  </div>
                 </div>
               )}
 
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-1 text-center lg:text-left">
+                <h1 className="text-3xl font-black bg-gradient-to-r from-white via-indigo-200 to-purple-200 bg-clip-text text-transparent mb-2 text-center lg:text-left">
                   {f.Name}
                 </h1>
-                <h2 className="text-lg text-gray-700 mb-1 text-center lg:text-left">
+                <h2 className="text-lg text-indigo-300 mb-1 text-center lg:text-left font-medium">
                   {f.Designation}
                 </h2>
-                <p className="text-md text-gray-600 mb-6 text-center lg:text-left">
+                <p className="text-md text-gray-400 mb-6 text-center lg:text-left">
                   {f.Department}
                 </p>
 
                 {/* Contact Info */}
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-4">
                   {f.EMAIL && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <Mail className="w-5 h-5 text-gray-400" />
+                    <div className="flex items-center gap-3 text-sm bg-white/5 p-3 rounded-xl backdrop-blur-xl border border-white/10">
+                      <Mail className="w-5 h-5 text-indigo-400" />
                       <a
                         href={`mailto:${f.EMAIL}`}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-indigo-300 hover:text-indigo-100 transition-colors"
                       >
                         {f.EMAIL}
                       </a>
                     </div>
                   )}
                   {f.Office_Address && (
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-700">{f.Office_Address}</span>
+                    <div className="flex items-center gap-3 text-sm bg-white/5 p-3 rounded-xl backdrop-blur-xl border border-white/10">
+                      <MapPin className="w-5 h-5 text-purple-400" />
+                      <span className="text-gray-300">{f.Office_Address}</span>
                     </div>
                   )}
                 </div>
@@ -266,22 +435,22 @@ export default function FacultyDetailPage({ params }) {
 
             {/* Right Column: Ratings */}
             <div className="flex-1 w-full">
-              <div className="bg-gray-50 rounded-2xl p-6 shadow-inner">
-                <h3 className="text-2xl font-semibold text-gray-900 mb-6">
-                  Ratings
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent mb-6">
+                  Faculty Ratings
                 </h3>
-                <div className="space-y-5">
+                <div className="space-y-6">
                   {categories.map((cat) => (
                     <div
                       key={cat.key}
-                      className="flex items-center justify-between pb-3"
+                      className="flex items-center justify-between pb-4 border-b border-white/10"
                     >
-                      <span className="text-gray-800 font-medium">
+                      <span className="text-gray-300 font-medium">
                         {cat.label}
                       </span>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3"> 
                         <div className="flex">{renderStars(rating?rating.ratings[cat.key]:ratings[cat.key])}</div>
-                        <span className="text-gray-600 text-sm">
+                        <span className="text-indigo-300 text-sm font-semibold min-w-[40px]">
                           {rating?rating.ratings[cat.key]:ratings[cat.key]}/5
                         </span>
                       </div>
@@ -292,9 +461,13 @@ export default function FacultyDetailPage({ params }) {
                 <div className="mt-8 flex justify-center">
                   <a
                     href={`/rate/${id}`}
-                    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition font-medium"
+                    className="group relative px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white font-bold rounded-2xl shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-500 overflow-hidden"
                   >
-                    Give Rating
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="relative flex items-center gap-2">
+                      <Star className="w-5 h-5" />
+                      Give Rating
+                    </div>
                   </a>
                 </div>
               </div>
@@ -313,32 +486,32 @@ export default function FacultyDetailPage({ params }) {
             {/* Education Accordion */}
             <Accordion 
               title="Education" 
-              icon={<GraduationCap className="w-6 h-6 text-blue-600" />}
+              icon={<GraduationCap className="w-6 h-6 text-indigo-400" />}
               defaultOpen={true}
             >
               <div className="space-y-4">
                 {f.Education_PHD && (
-                  <div className="border-l-4 border-blue-600 pl-4">
-                    <div className="font-medium text-gray-900">Doctor of Philosophy</div>
-                    <div className="text-gray-600">{f.Education_PHD}</div>
+                  <div className="border-l-4 border-indigo-500 pl-4 bg-indigo-500/10 p-4 rounded-r-xl">
+                    <div className="font-semibold text-indigo-300">Doctor of Philosophy</div>
+                    <div className="text-gray-400">{f.Education_PHD}</div>
                   </div>
                 )}
                 {f.Education_PG && (
-                  <div className="border-l-4 border-green-600 pl-4">
-                    <div className="font-medium text-gray-900">Post Graduate</div>
-                    <div className="text-gray-600">{f.Education_PG}</div>
+                  <div className="border-l-4 border-purple-500 pl-4 bg-purple-500/10 p-4 rounded-r-xl">
+                    <div className="font-semibold text-purple-300">Post Graduate</div>
+                    <div className="text-gray-400">{f.Education_PG}</div>
                   </div>
                 )}
                 {f.Education_UG && (
-                  <div className="border-l-4 border-purple-600 pl-4">
-                    <div className="font-medium text-gray-900">Under Graduate</div>
-                    <div className="text-gray-600">{f.Education_UG}</div>
+                  <div className="border-l-4 border-pink-500 pl-4 bg-pink-500/10 p-4 rounded-r-xl">
+                    <div className="font-semibold text-pink-300">Under Graduate</div>
+                    <div className="text-gray-400">{f.Education_UG}</div>
                   </div>
                 )}
                 {f.Education_other && (
-                  <div className="border-l-4 border-gray-600 pl-4">
-                    <div className="font-medium text-gray-900">Other Qualifications</div>
-                    <div className="text-gray-600">{f.Education_other}</div>
+                  <div className="border-l-4 border-gray-500 pl-4 bg-gray-500/10 p-4 rounded-r-xl">
+                    <div className="font-semibold text-gray-300">Other Qualifications</div>
+                    <div className="text-gray-400">{f.Education_other}</div>
                   </div>
                 )}
               </div>
@@ -348,9 +521,9 @@ export default function FacultyDetailPage({ params }) {
             {f.Research_area_of_specialization && (
               <Accordion 
                 title="Research Specialization" 
-                icon={<Microscope className="w-6 h-6 text-green-600" />}
+                icon={<Microscope className="w-6 h-6 text-purple-400" />}
               >
-                <p className="text-gray-700 leading-relaxed">{f.Research_area_of_specialization}</p>
+                <p className="text-gray-300 leading-relaxed">{f.Research_area_of_specialization}</p>
               </Accordion>
             )}
 
@@ -358,9 +531,9 @@ export default function FacultyDetailPage({ params }) {
             {f.Professonal_Membership && (
               <Accordion 
                 title="Professional Memberships" 
-                icon={<Users className="w-6 h-6 text-indigo-600" />}
+                icon={<Users className="w-6 h-6 text-pink-400" />}
               >
-                <p className="text-gray-700">{f.Professonal_Membership}</p>
+                <p className="text-gray-300">{f.Professonal_Membership}</p>
               </Accordion>
             )}
 
@@ -368,17 +541,17 @@ export default function FacultyDetailPage({ params }) {
             {f.Awards_and_Recognitions?.length > 0 && (
               <Accordion 
                 title="Awards & Recognition" 
-                icon={<Award className="w-6 h-6 text-yellow-600" />}
+                icon={<Award className="w-6 h-6 text-yellow-400" />}
                 count={f.Awards_and_Recognitions.length}
               >
                 <div className="space-y-4">
                   {f.Awards_and_Recognitions.map((award, index) => (
-                    <div key={award.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div key={award.id} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
                       <div className="flex items-start gap-3">
-                        <div className="bg-yellow-100 text-yellow-700 w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                        <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0 border border-yellow-500/30">
                           {index + 1}
                         </div>
-                        <p className="text-gray-700">{award.award_or_recognition_name}</p>
+                        <p className="text-gray-300">{award.award_or_recognition_name}</p>
                       </div>
                     </div>
                   ))}
@@ -390,13 +563,13 @@ export default function FacultyDetailPage({ params }) {
             {f.Patents?.length > 0 && (
               <Accordion 
                 title="Patents" 
-                icon={<Lightbulb className="w-6 h-6 text-orange-600" />}
+                icon={<Lightbulb className="w-6 h-6 text-orange-400" />}
                 count={f.Patents.length}
               >
                 <div className="space-y-3">
                   {f.Patents.map((patent) => (
-                    <div key={patent.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                      <p className="text-gray-700">{patent.patent}</p>
+                    <div key={patent.id} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                      <p className="text-gray-300">{patent.patent}</p>
                     </div>
                   ))}
                 </div>
@@ -407,13 +580,13 @@ export default function FacultyDetailPage({ params }) {
             {f.Projects?.length > 0 && (
               <Accordion 
                 title="Research Projects" 
-                icon={<Rocket className="w-6 h-6 text-blue-600" />}
+                icon={<Rocket className="w-6 h-6 text-blue-400" />}
                 count={f.Projects.length}
               >
                 <div className="space-y-3">
                   {f.Projects.map((project) => (
-                    <div key={project.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                      <p className="text-gray-700">{project.project}</p>
+                    <div key={project.id} className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
+                      <p className="text-gray-300">{project.project}</p>
                     </div>
                   ))}
                 </div>
@@ -425,40 +598,42 @@ export default function FacultyDetailPage({ params }) {
           <div className="space-y-6">
             
             {/* Quick Stats */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <BarChart3 className="w-6 h-6 text-gray-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Overview</h3>
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-indigo-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-white">Overview</h3>
               </div>
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Patents</span>
-                  <span className="font-semibold text-gray-900">{f.Patents?.length || 0}</span>
+                <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                  <span className="text-gray-400">Patents</span>
+                  <span className="font-bold text-indigo-300">{f.Patents?.length || 0}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Projects</span>
-                  <span className="font-semibold text-gray-900">{f.Projects?.length || 0}</span>
+                <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                  <span className="text-gray-400">Projects</span>
+                  <span className="font-bold text-purple-300">{f.Projects?.length || 0}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Awards</span>
-                  <span className="font-semibold text-gray-900">{f.Awards_and_Recognitions?.length || 0}</span>
+                <div className="flex justify-between items-center p-3 bg-white/5 rounded-xl">
+                  <span className="text-gray-400">Awards</span>
+                  <span className="font-bold text-pink-300">{f.Awards_and_Recognitions?.length || 0}</span>
                 </div>
               </div>
             </div>
 
             {/* Academic Links */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Academic Profiles</h3>
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-6">Academic Profiles</h3>
               <div className="space-y-3">
                 {f.Research_google_schloar && (
                   <a
                     href={f.Research_google_schloar}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-700">Google Scholar</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 group-hover:text-white">Google Scholar</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-indigo-400" />
                   </a>
                 )}
                 {f.Research_Research_Gate && (
@@ -466,10 +641,10 @@ export default function FacultyDetailPage({ params }) {
                     href={f.Research_Research_Gate}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-700">ResearchGate</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 group-hover:text-white">ResearchGate</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-purple-400" />
                   </a>
                 )}
                 {f.Research_Scopus_Id && (
@@ -477,10 +652,10 @@ export default function FacultyDetailPage({ params }) {
                     href={f.Research_Scopus_Id}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-700">Scopus</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 group-hover:text-white">Scopus</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-pink-400" />
                   </a>
                 )}
                 {f.Research_orchid && (
@@ -488,10 +663,10 @@ export default function FacultyDetailPage({ params }) {
                     href={f.Research_orchid}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-700">ORCID</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 group-hover:text-white">ORCID</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-indigo-400" />
                   </a>
                 )}
                 {f.Research_vidwan && (
@@ -499,10 +674,10 @@ export default function FacultyDetailPage({ params }) {
                     href={f.Research_vidwan}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-700">Vidwan</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 group-hover:text-white">Vidwan</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-purple-400" />
                   </a>
                 )}
                 {f.LinkedIn && (
@@ -510,10 +685,10 @@ export default function FacultyDetailPage({ params }) {
                     href={f.LinkedIn}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-700">LinkedIn</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 group-hover:text-white">LinkedIn</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-blue-400" />
                   </a>
                 )}
                 {f.Website && (
@@ -521,10 +696,10 @@ export default function FacultyDetailPage({ params }) {
                     href={f.Website.startsWith('http') ? f.Website : `https://${f.Website}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all duration-300 group"
                   >
-                    <span className="text-gray-700">Personal Website</span>
-                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-300 group-hover:text-white">Personal Website</span>
+                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-green-400" />
                   </a>
                 )}
               </div>
