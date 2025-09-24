@@ -54,8 +54,7 @@ export default function StarRatingForm({ id }) {
     setMessage("Submitting your rating...");
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-      const res = await fetch(`${baseUrl}/api/rate/${id}`, {
+      const res = await fetch(`/api/rate/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ratings),

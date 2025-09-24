@@ -1,16 +1,19 @@
 import FacultyList from "./FacultyList";
+import fs from 'fs';
+import path from 'path';
 
 async function getFacultyData() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/data.json`, {
-    next: { revalidate: 60 },
-  });
-
-  if (!res.ok) {
+  try {
+    // Read the file directly from the file system
+    const filePath = path.join(process.cwd(), 'public', 'data.json');
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(fileContents);
+  } catch (error) {
+    console.error('Error reading data.json:', error);
     throw new Error("Failed to load data.json");
   }
-  return res.json();
 }
+
 
 export default async function FacultyPage() {
   const data = await getFacultyData();

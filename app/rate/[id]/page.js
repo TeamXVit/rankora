@@ -4,15 +4,20 @@ import { redirect } from "next/navigation";
 import dbConnect from "@/lib/mongodb";
 import StarRatingForm from "./StarRatingForm";
 import Link from "next/link";
+import fs from 'fs';
+import path from 'path';
 
 const fetchFacultyData = async (id) => {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/data.json`, {
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) throw new Error("Failed to load data.json");
-  const { data } = await res.json();
-  return data.find((item) => String(item.id) === id);
+  try {
+    // Read the file directly from the file system
+    const filePath = path.join(process.cwd(), 'public', 'data.json');
+    const fileContents = fs.readFileSync(filePath, 'utf8');
+    const { data } = JSON.parse(fileContents);
+    return data.find((item) => String(item.id) === id);
+  } catch (error) {
+    console.error('Error reading faculty data:', error);
+    throw new Error("Failed to load data.json");
+  }
 };
 
 export default async function RatePage({ params }) {

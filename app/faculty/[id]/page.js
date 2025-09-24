@@ -208,8 +208,7 @@ const Accordion = ({
 
 // Move fetch function outside component to prevent recreation
 const fetchFacultyData = async (id) => {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/data.json`, {
+  const res = await fetch(`/data.json`, {
     next: { revalidate: 60 },
   });
 
@@ -220,8 +219,7 @@ const fetchFacultyData = async (id) => {
 };
 
 const fetchFacultyRating = async (id) => {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/faculty/${id}`, {
+  const res = await fetch(`/api/faculty/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
