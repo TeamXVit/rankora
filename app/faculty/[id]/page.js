@@ -446,52 +446,66 @@ export default function FacultyDetailPage({ params }) {
 
             {/* Right Column: Ratings */}
             <div className="flex-1 w-full">
-              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl border border-white/10">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
+                  <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
                     Faculty Ratings
                   </h3>
                   {/* Total People Rated */}
-                  <div className="flex items-center gap-2 px-3 py-1 bg-white/10 rounded-lg border border-white/20">
-                    <Users className="w-4 h-4 text-indigo-300" />
-                    <span className="text-sm text-gray-300 font-medium">
-                      {rating?.ratedBy.length || 0} rated
+                  <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-white/10 rounded-lg border border-white/20">
+                    <Users className="w-3 h-3 sm:w-4 sm:h-4 text-indigo-300" />
+                    <span className="text-xs sm:text-sm text-gray-300 font-medium">
+                      {rating?.ratedBy.length || 0} <span className="hidden md:inline">rated</span>
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {categories.map((cat) => (
                     <div
                       key={cat.key}
-                      className="flex items-center justify-between pb-4 border-b border-white/10"
+                      className="flex items-center justify-between pb-3 sm:pb-4 border-b border-white/10"
                     >
-                      <span className="text-gray-300 font-medium">
-                        {cat.label}
+                      <span className="text-gray-300 font-medium text-sm sm:text-base">
+                        {/* Short labels for mobile */}
+                        <span className="sm:hidden">
+                          {cat.key === "teaching" && "Teaching"}
+                          {cat.key === "attendance" && "Attendance"}
+                          {cat.key === "theory" && "Theory"}
+                          {cat.key === "lab" && "Lab"}
+                          {cat.key === "project" && "Project"}
+                        </span>
+                        {/* Full labels for tablet+ */}
+                        <span className="hidden sm:inline">{cat.label}</span>
                       </span>
-                      <div className="flex items-center gap-3">
+
+                      <div className="flex items-center gap-2 sm:gap-3">
                         <div className="flex">
                           {renderStars(
-                            rating ? rating.ratings[cat.key] : ratings[cat.key]
+                            rating ? rating.ratings[cat.key] : ratings[cat.key],
+                            { size: 12 } // ✅ pass smaller size on mobile (adjust renderStars fn)
                           )}
                         </div>
-                        <span className="text-indigo-300 text-sm font-semibold min-w-[40px]">
-                          {rating ? rating.ratings[cat.key] : ratings[cat.key]}
-                          /5
+                        <span className="text-indigo-300 text-xs sm:text-sm font-semibold min-w-[32px] sm:min-w-[40px] text-right">
+                          {(rating
+                            ? rating.ratings[cat.key]
+                            : ratings[cat.key]
+                          ).toFixed(1)}
+                          /5.0
                         </span>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-8 flex justify-center">
+                <div className="mt-6 sm:mt-8 flex justify-center">
                   <a
                     href={`/rate/${id}`}
-                    className="group relative px-8 py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white font-bold rounded-2xl shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-500 overflow-hidden"
+                    className="group relative px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white font-bold rounded-2xl shadow-2xl shadow-indigo-500/30 hover:shadow-indigo-500/50 transform hover:scale-105 transition-all duration-500 overflow-hidden text-sm sm:text-base"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div className="relative flex items-center gap-2">
-                      <Star className="w-5 h-5" />
+                    <div className="relative flex items-center gap-1.5 sm:gap-2">
+                      <Star className="w-4 h-4 sm:w-5 sm:h-5" />
                       Give Rating
                     </div>
                   </a>

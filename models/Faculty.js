@@ -9,7 +9,15 @@ const FacultySchema = new mongoose.Schema({
     max: 9999,
   },
   ratings: {
-    teaching: {type: Number, default: 0},
+    teaching: { type: Number, default: 0 },
+    attendance: { type: Number, default: 0 },
+    theory: { type: Number, default: 0 },
+    lab: { type: Number, default: 0 },
+    project: { type: Number, default: 0 },
+  },
+  // Track how many non-zero ratings each category received
+  ratingCounts: {
+    teaching: { type: Number, default: 0 },
     attendance: { type: Number, default: 0 },
     theory: { type: Number, default: 0 },
     lab: { type: Number, default: 0 },

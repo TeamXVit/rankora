@@ -74,6 +74,7 @@ export default function StarRatingForm({ id }) {
           lab: 0,
           project: 0,
         });
+        window.location.href = `/faculty/${id}`
       }
     } catch (err) {
       setMessage("Something went wrong. Please try again.");
@@ -81,8 +82,6 @@ export default function StarRatingForm({ id }) {
       setIsSubmitting(false);
     }
   };
-
-  const isFormValid = Object.values(ratings).every(rating => rating > 0);
 
   return (
     <div className="w-full max-w-lg">
@@ -137,20 +136,20 @@ export default function StarRatingForm({ id }) {
         <div className="pt-4">
           <button
             type="submit"
-            disabled={!isFormValid || isSubmitting}
+            disabled={isSubmitting}
             className={`group relative w-full px-8 py-4 font-bold rounded-2xl shadow-2xl transform transition-all duration-500 overflow-hidden ${
-              isFormValid && !isSubmitting
+              !isSubmitting
                 ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white hover:scale-105 shadow-indigo-500/30 hover:shadow-indigo-500/50'
                 : 'bg-gray-600 text-gray-400 cursor-not-allowed'
             }`}
           >
             {/* Button glow effect */}
-            {isFormValid && !isSubmitting && (
+            {!isSubmitting && (
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             )}
             
             {/* Shimmer effect */}
-            {isFormValid && !isSubmitting && (
+            {!isSubmitting && (
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
             )}
             
@@ -168,12 +167,6 @@ export default function StarRatingForm({ id }) {
               )}
             </div>
           </button>
-
-          {!isFormValid && (
-            <p className="text-gray-400 text-sm text-center mt-3">
-              Please rate all categories to submit
-            </p>
-          )}
         </div>
 
         {/* Message Display */}

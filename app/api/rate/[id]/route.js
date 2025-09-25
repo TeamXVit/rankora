@@ -18,15 +18,16 @@ export async function POST(request, { params }) {
 
   try {
     const body = await request.json();
-    const { teaching ,attendance, theory, lab, project } = body;
+    const { teaching, attendance, theory, lab, project } = body;
 
     let faculty = await Faculty.findOne({ facultyId: id });
 
     if (!faculty) {
       faculty = await Faculty.create({
         facultyId: id,
-        ratings: { teaching: 0 ,attendance: 0, theory: 0, lab: 0, project: 0 },
+        ratings: { teaching: 0, attendance: 0, theory: 0, lab: 0, project: 0 },
         ratedBy: [],
+        ratingCounts: { teaching: 0, attendance: 0, theory: 0, lab: 0, project: 0 },
       });
     }
 
@@ -38,25 +39,38 @@ export async function POST(request, { params }) {
       );
     }
 
-    faculty.ratings.teaching =
-      (faculty.ratings.teaching * faculty.ratedBy.length + teaching) /
-      (faculty.ratedBy.length + 1);
+    // ✅ Update averages only if rating > 0
+    const updateAverage = (currentAvg, currentCount, newValue) => {
+      if (newValue > 0) {
+        return {
+          avg: (currentAvg * currentCount + newValue) / (currentCount + 1),
+          count: currentCount + 1,
+        };
+      }
+      return { avg: currentAvg, count: currentCount };
+    };
 
-    faculty.ratings.attendance =
-      (faculty.ratings.attendance * faculty.ratedBy.length + attendance) /
-      (faculty.ratedBy.length + 1);
+    let result;
 
-    faculty.ratings.theory =
-      (faculty.ratings.theory * faculty.ratedBy.length + theory) /
-      (faculty.ratedBy.length + 1);
+    result = updateAverage(faculty.ratings.teaching, faculty.ratingCounts.teaching, teaching);
+    faculty.ratings.teaching = result.avg;
+    faculty.ratingCounts.teaching = result.count;
 
-    faculty.ratings.lab =
-      (faculty.ratings.lab * faculty.ratedBy.length + lab) /
-      (faculty.ratedBy.length + 1);
+    result = updateAverage(faculty.ratings.attendance, faculty.ratingCounts.attendance, attendance);
+    faculty.ratings.attendance = result.avg;
+    faculty.ratingCounts.attendance = result.count;
 
-    faculty.ratings.project =
-      (faculty.ratings.project * faculty.ratedBy.length + project) /
-      (faculty.ratedBy.length + 1);
+    result = updateAverage(faculty.ratings.theory, faculty.ratingCounts.theory, theory);
+    faculty.ratings.theory = result.avg;
+    faculty.ratingCounts.theory = result.count;
+
+    result = updateAverage(faculty.ratings.lab, faculty.ratingCounts.lab, lab);
+    faculty.ratings.lab = result.avg;
+    faculty.ratingCounts.lab = result.count;
+
+    result = updateAverage(faculty.ratings.project, faculty.ratingCounts.project, project);
+    faculty.ratings.project = result.avg;
+    faculty.ratingCounts.project = result.count;
 
     faculty.ratedBy.push(userEmail);
     await faculty.save();
