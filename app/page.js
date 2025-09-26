@@ -79,26 +79,6 @@ export default function Home() {
               {/* Left Side - TeamX & Developers */}
               <div className="flex items-center gap-2">
                 <span className="text-white font-bold">TeamX</span>
-                <span className="text-gray-400">•</span>
-                <span className="text-gray-300">
-                  <a
-                    href="https://github.com/prodev717"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline hover:text-white"
-                  >
-                    Ganesh M
-                  </a>
-                  ,{" "}
-                  <a
-                    href="https://github.com/RohiVK"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline hover:text-white"
-                  >
-                    V K Rohith
-                  </a>
-                </span>
               </div>
 
               {/* Right Side - Social Links */}
@@ -158,25 +138,6 @@ export default function Home() {
                   <span className="font-bold text-white">
                     Developed by TeamX
                   </span>
-                </p>
-                <p className="text-xs text-gray-400 mt-1">
-                  <a
-                    href="https://github.com/prodev717"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline hover:text-white"
-                  >
-                    Ganesh M
-                  </a>
-                  ,{" "}
-                  <a
-                    href="https://github.com/RohiVK"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline hover:text-white"
-                  >
-                    V K Rohith
-                  </a>
                 </p>
               </div>
 

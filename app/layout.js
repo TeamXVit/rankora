@@ -1,7 +1,7 @@
 import "./globals.css";
 import Providers from "./providers";
 import Navbar from "./components/Navbar";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
   title: "Rankora",
@@ -20,7 +20,12 @@ export const metadata = {
     { name: "Ganesh M", url: "https://github.com/prodev717" },
     { name: "V K Rohith", url: "https://github.com/RohiVK" },
   ],
-  verification: { google: "NE_NZzYugJBp2hjpi9Q4VaLLKJpwrpdPl5h8mTLl4tc" },
+  verification: {
+    google: "NE_NZzYugJBp2hjpi9Q4VaLLKJpwrpdPl5h8mTLl4tc",
+    other: {
+      'msvalidate.01': ['04102198BCF044821D5073099AF93C42'],
+    },
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -87,7 +92,7 @@ export default function RootLayout({ children }) {
           <Navbar />
           <main className="relative z-10 max-w-7xl mx-auto px-4 py-6 pt-8">
             {children}
-            <Analytics/>
+            <Analytics />
           </main>
         </Providers>
       </body>
